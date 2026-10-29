@@ -5,7 +5,7 @@
 @media(max-width:560px){.brand-copy strong{font-size:10px}.brand-copy small{font-size:7px}.hero,.hero-inner{min-height:660px}.hero-inner{padding:120px 7% 90px}.hero h1{font-size:40px}.hero-description{font-size:13px}.hero-side-note{display:none}.hero:after{width:330px;height:330px;right:-45%;top:35%}.hero-bottom{padding:0 7%;font-size:8px}.intro-band{grid-template-columns:1fr;padding:45px 7%;gap:12px}.intro-lead h2,.section h2,.subsidy h2{font-size:31px}.intro-band>p{margin:0}.section{padding:60px 7%}.checkup-layout{grid-template-columns:1fr}.checkup-visual{min-height:280px}.checkup-panel{padding:25px 22px}.solution-grid{grid-template-columns:1fr}.solution-card:last-child{grid-column:auto}.solution-card{min-height:290px}.subsidy{grid-template-columns:1fr;padding:55px 7%}.subsidy-art{display:none}.steps{grid-template-columns:1fr;gap:23px;margin-top:35px}.steps article{display:grid;grid-template-columns:40px 1fr;column-gap:12px}.step-no{grid-row:span 3}.step-line{margin:12px 0}.steps h3{margin:0 0 5px}.contact{display:block;padding:48px 7%}.contact .button{margin-top:24px}.footer{grid-template-columns:1fr;padding:30px 7%}.footer>p{justify-self:start;margin:0}.footer>small{grid-column:auto}.desktop{display:none}}
 /* Home Shield 住宅主視覺 */
 .hero-bg {
-  background-image: url("/assets/hero-building.png");
+  background-image: url("/hero-building.png");
   background-size: cover;
   background-position: center right;
   background-repeat: no-repeat;
