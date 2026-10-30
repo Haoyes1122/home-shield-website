@@ -14,13 +14,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image:
-    linear-gradient(
-      90deg,
-      rgba(8, 20, 42, 0.25),
-      rgba(8, 20, 42, 0.05)
-    ),
-    url("/hero-building.png");
+  background-image: url("/hero-building.png");
   background-size: cover;
   background-position: center right;
   background-repeat: no-repeat;
