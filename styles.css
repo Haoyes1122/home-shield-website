@@ -42,3 +42,34 @@
   position: relative;
   z-index: 2;
 }
+/* 首頁主視覺文字清晰度修正 */
+.hero-copy {
+  position: relative;
+  z-index: 3;
+  color: #ffffff;
+}
+
+.hero-copy h1 {
+  color: #ffffff;
+}
+
+.hero-copy h1 em {
+  color: #f0dfa9;
+}
+
+.hero-description {
+  color: #e0e7e4;
+}
+
+.hero-assurance b {
+  color: #ffffff;
+}
+
+.hero-assurance small {
+  color: #c3ccc6;
+}
+
+.hero-side-note,
+.hero-bottom {
+  color: #c3ccc6;
+}
