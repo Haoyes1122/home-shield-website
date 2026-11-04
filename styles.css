@@ -130,3 +130,32 @@ img{max-width:100%}
 @media(max-width:900px){.main-nav{gap:14px;font-size:12px}.brand-logo{width:185px}.intro-grid,.product-grid,.passport-grid{gap:45px}.hero-stamp{display:none}.section-heading{align-items:flex-start;flex-direction:column;gap:15px}.section-heading>p{max-width:520px}.footer-main{flex-wrap:wrap}}
 @media(max-width:700px){.container{width:min(100% - 36px,560px)}.site-header{height:72px}.brand-logo{width:178px;max-height:52px}.menu-toggle{display:block}.main-nav{display:none;position:absolute;top:72px;left:0;right:0;background:#fff;padding:18px 24px 24px;border-bottom:1px solid var(--line);box-shadow:0 15px 25px rgba(16,38,56,.08);flex-direction:column;align-items:stretch;gap:0}.main-nav.open{display:flex}.main-nav>a{padding:12px 3px;border-bottom:1px solid #edf0ed}.main-nav .nav-cta{text-align:center;margin-top:12px;border:1px solid var(--gold);padding:10px}.hero,.hero-inner{min-height:650px}.hero-photo{background-position:58% center}.hero-wash{background:linear-gradient(90deg,rgba(9,29,43,.88),rgba(12,35,50,.56)),linear-gradient(0deg,rgba(8,25,38,.42),transparent 55%)}.hero-inner{padding-top:30px;padding-bottom:75px}.hero h1{font-size:39px}.hero-description{font-size:14px}.hero-proof{margin-top:32px}.hero-bottom{padding:12px 18px;font-size:8px;letter-spacing:.8px}.section{padding:72px 0}.intro-grid,.product-grid,.passport-grid{grid-template-columns:1fr;gap:27px}.intro-copy{max-width:none}.section h2,.contact h2{font-size:32px}.solution-grid{grid-template-columns:1fr;gap:12px}.solution-card{min-height:0;padding:27px 24px}.solution-card p{min-height:0}.product-visual{min-height:350px;order:2}.product-copy{order:1}.service-band{padding:55px 0}.service-band-inner{display:block}.service-band h2{font-size:29px}.service-band-inner>p{margin-top:20px}.process-list article{grid-template-columns:48px 1fr 20px;gap:12px;padding:19px 0}.process-list h3{font-size:15px}.passport-art{min-height:350px;padding:25px}.passport-copy{order:1}.passport-art{order:2}.contact{padding:75px 0}.footer-main{display:grid;grid-template-columns:1fr;gap:20px}.footer-main nav{gap:12px 18px}.footer-bottom{font-size:8px}}
 @media(max-width:380px){.hero h1{font-size:34px}.hero-actions .button{width:100%}.hero-bottom span:first-child{display:none}}
+
+
+/* HOME SHIELD 2.0: desktop multi-page / mobile one-page navigation */
+.desktop-hub{display:none;background:var(--paper);padding:82px 0 96px}
+.desktop-hub h2{font-family:var(--serif);font-size:clamp(30px,3.4vw,42px);line-height:1.45;color:var(--navy);margin:0 0 34px}
+.desktop-hub h2 em{font-style:normal;color:#a7833e}
+.hub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.hub-card{position:relative;min-height:180px;padding:26px 26px 24px;background:#fff;border:1px solid var(--line);display:flex;flex-direction:column;align-items:flex-start;transition:.2s}
+.hub-card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(16,38,56,.08);border-color:#c9a95f}
+.hub-card>span{font-size:9px;letter-spacing:1.8px;color:#a7833e}
+.hub-card>b{font:600 22px var(--serif);color:var(--navy);margin-top:17px}
+.hub-card>small{font-size:12px;color:var(--muted);margin-top:5px}
+.hub-card>i{position:absolute;right:24px;bottom:22px;color:#a7833e;font-style:normal;font-size:19px}
+.hub-card.featured{background:var(--navy);border-color:var(--navy)}
+.hub-card.featured>b{color:#fff}.hub-card.featured>small{color:#d3dcdf}
+.page-heading{background:var(--paper);padding:42px 0 38px;border-bottom:1px solid var(--line)}
+.page-heading .section-kicker{margin-bottom:8px}
+.page-heading h1{font:600 34px var(--serif);color:var(--navy);margin:0 0 8px}
+.page-heading a,.page-heading span,.page-heading b{font-size:11px;color:var(--muted)}
+.page-heading b{color:#a7833e}
+@media(min-width:701px){
+  .home-page .desktop-hub{display:block}
+  .home-page main>.intro,.home-page main>.solutions,.home-page main>.product,.home-page main>.service-band,.home-page main>.process,.home-page main>.passport,.home-page main>.contact{display:none}
+}
+@media(max-width:700px){
+  .desktop-hub{display:none!important}
+  .page-heading{padding:30px 0}
+  .page-heading h1{font-size:28px}
+}
