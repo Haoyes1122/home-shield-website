@@ -18,7 +18,7 @@ img{max-width:100%}
 .menu-toggle{display:none;background:none;border:0;padding:8px}
 .menu-toggle span{display:block;width:25px;height:2px;background:var(--navy);margin:5px}
 .hero{position:relative;min-height:650px;display:flex;align-items:center;overflow:hidden;background:var(--navy)}
-.hero-photo{position:absolute;inset:0;background-image:url("./01_home_hero.png");background-size:cover;background-position:center 48%;transform:scale(1.01)}
+.hero-photo{position:absolute;inset:0;background-image:url("./hero-building.png");background-size:cover;background-position:center 48%;transform:scale(1.01)}
 .hero-wash{position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,29,43,.88) 0%,rgba(12,35,50,.73) 43%,rgba(12,35,50,.18) 100%),linear-gradient(0deg,rgba(8,25,38,.35),transparent 40%)}
 .hero-inner{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;min-height:650px;padding-top:45px;padding-bottom:70px}
 .hero-copy{max-width:660px;color:#fff}
