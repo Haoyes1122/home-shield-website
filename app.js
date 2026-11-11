@@ -4,18 +4,24 @@
   const mobileMode = window.matchMedia("(max-width: 700px)");
 
   function updateNavigation() {
-    if (!nav) return;
-    nav.querySelectorAll("a[data-anchor]").forEach(link => {
-      const anchor = link.dataset.anchor;
-      if (mobileMode.matches) {
-        link.href = window.location.pathname.endsWith("/index.html") || window.location.pathname === "/"
-          ? `#${anchor}`
-          : `./index.html#${anchor}`;
-      } else {
-        link.href = `./${anchor === "about" ? "about" : anchor === "solutions" ? "solutions" : anchor === "bn1000" ? "bn1000" : anchor === "process" ? "process" : anchor === "passport" ? "passport" : "contact"}.html`;
-      }
-    });
-  }
+  if (!nav) return;
+
+  const pages = {
+    about: "about.html",
+    solutions: "solutions.html",
+    bn1000: "bn1000.html",
+    process: "process.html",
+    passport: "passport.html",
+    contact: "contact.html"
+  };
+
+  nav.querySelectorAll("a[data-anchor]").forEach(link => {
+    const anchor = link.dataset.anchor;
+    if (pages[anchor]) {
+      link.href = `./${pages[anchor]}`;
+    }
+  });
+}
 
   updateNavigation();
   if (mobileMode.addEventListener) mobileMode.addEventListener("change", updateNavigation);
