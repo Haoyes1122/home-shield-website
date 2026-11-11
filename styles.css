@@ -176,3 +176,20 @@ img{max-width:100%}
     background-position: center center;
   }
 }
+
+/* Home Shield 解決方案頁面背景 */
+.solutions-hero {
+  width: 100%;
+  height: 360px;
+  background-image: url("./solutions-hero.png");
+  background-size: cover;
+  background-position: center 55%;
+  background-repeat: no-repeat;
+}
+
+@media (max-width: 768px) {
+  .solutions-hero {
+    height: 230px;
+    background-position: center center;
+  }
+}
