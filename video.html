@@ -112,7 +112,7 @@ button:focus-visible{outline:3px solid var(--water);outline-offset:2px}
     <div class="chips"><span class="pop" style="--d:2.9s">產品選購</span><span class="pop" style="--d:3.05s">DIY 施工</span><span class="pop" style="--d:3.2s">專業施工</span><span class="pop" style="--d:3.35s">房屋健檢</span></div>
   </section>
 
-  <section class="sc" data-d="3200">
+  <section class="sc" data-d="4000">
     <div class="tag pop">房屋健康護照</div>
     <h2 class="pop" style="font-size:8cqw">每一次維護，<br>都有跡可循。</h2>
     <div class="card pop" style="--d:.4s"><b>HS / 001</b>
@@ -146,7 +146,7 @@ button:focus-visible{outline:3px solid var(--water);outline-offset:2px}
     if(!paused){
       var d=+scs[idx].dataset.d,e=elapsed+(now-t0);
       fills[idx].style.width=Math.min(100,e/d*100)+'%';
-      if(e>=d){go(idx+1)}
+      if(e>=d){if(idx===scs.length-1){try{parent.postMessage('hs-done','*')}catch(x){}}go(idx+1)}
     }
     raf=requestAnimationFrame(tick);
   }
