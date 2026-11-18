@@ -111,7 +111,7 @@ window.addEventListener('message',function(e){
   <iframe src="/video.html" width="360" height="640" style="border:0;border-radius:18px;max-width:100%" title="Home Shield 短影音" loading="lazy"></iframe>
 </section>
 
-<section class="product section" id="bn1000"><section class="product section" id="bn1000">
+<section class="product section" id="bn1000">
       <div class="container product-grid">
         <div class="product-visual">
           <div class="product-orbit orbit-one"></div><div class="product-orbit orbit-two"></div>
@@ -161,10 +161,7 @@ window.addEventListener('message',function(e){
       </div>
     </section>
 <script>
-window.addEventListener('message',function(e){
-  var f=document.getElementById('faq-frame');
-  if(f&&e.source===f.contentWindow&&e.data&&e.data.hsHeight){f.style.height=e.data.hsHeight+'px';}
-});
+
 </script><section class="contact section" id="contact">
       <div class="container contact-inner">
         <p class="section-kicker">LET'S TALK</p>
@@ -188,7 +185,7 @@ window.addEventListener('message',function(e){
   <p>讓房屋維護更有方向，<br>讓每一次處理都有依據。</p>
   <nav><a href="./about.html">品牌理念</a><a href="./solutions.html">解決方案</a><a href="./bn1000.html">BN-1000</a><a href="./passport.html">房屋健康護照</a></nav>
 </div><div class="container footer-bottom"><span>© <span id="year"></span> HOME SHIELD. ALL RIGHTS RESERVED.</span><span>房屋健康管理</span></div></footer><script src="./app.js?v=3"></script><div id="intro" style="position:fixed;inset:0;z-index:9999;background:#102638;display:flex;align-items:center;justify-content:center;transition:opacity .6s">
-  <iframe src="/video.html" title="Home Shield 開場動畫" style="border:0;height:min(640px,88vh);aspect-ratio:9/16;max-width:94vw;border-radius:18px"></iframe>
+  <iframe id="faq-frame" src="/faq.html" title="常見問題" style="border:3px solid red;width:100%;max-width:560px;height:560px"></iframe>
   <button id="intro-skip" style="position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;padding:8px 18px;border-radius:99px;border:1px solid #fff;background:transparent;color:#fff;font-size:14px;cursor:pointer">略過 ✕</button>
 </div>
 <script>
