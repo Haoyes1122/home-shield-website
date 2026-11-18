@@ -178,6 +178,10 @@
     setTimeout(function(){ el.remove(); },600);
   }
   document.getElementById('intro-skip').onclick=close;
-  setTimeout(close,11000);
+    window.addEventListener('message',function(e){
+    if(e.data==='hs-done'){ setTimeout(close,500); }
+  });
+  setTimeout(close,16000);
 })();
+</script></body></html>
 </script></body></html>
