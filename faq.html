@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>常見問題｜Home Shield</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap">
+<style>
+:root{--bg:#f2f5f7;--card:#fff;--ink:#102638;--mute:#5b6f7e;--line:#d5dee5;--water:#2b8fc0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1822;--card:#142636;--ink:#e4eef4;--mute:#93a9b8;--line:#27425a;--water:#52b4e2}}
+:root[data-theme="dark"]{--bg:#0c1822;--card:#142636;--ink:#e4eef4;--mute:#93a9b8;--line:#27425a;--water:#52b4e2}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.7;padding:16px}
+.wrap{max-width:560px;margin:0 auto}
+h1{font-size:22px;font-weight:900;line-height:1.35}
+.sub{color:var(--mute);font-size:14px;margin:6px 0 14px}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden}
+details[open]{border-color:var(--water)}
+summary{list-style:none;cursor:pointer;padding:14px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";flex:none;width:26px;height:26px;border-radius:50%;background:var(--water);color:#fff;display:grid;place-items:center;font-size:18px;line-height:1;transition:transform .25s}
+details[open] summary::after{transform:rotate(45deg)}
+summary:focus-visible,a:focus-visible{outline:3px solid var(--water);outline-offset:-3px}
+.a{padding:0 16px 16px;font-size:15px;color:var(--ink)}
+.a p+p{margin-top:8px}
+.a a{color:var(--water);font-weight:700}
+.note{font-size:12px;color:var(--mute);margin-top:6px}
+@media (prefers-reduced-motion:reduce){summary::after{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap" id="w">
+  <h1>常見問題</h1>
+  <p class="sub">點選問題，查看說明。</p>
+
+  <details><summary>Home Shield 提供哪些服務？</summary><div class="a"><p>包含三個方向：房屋健檢與評估、防水產品與施工方案，以及維護紀錄與管理。可以依需求選擇，不必一次完成所有項目。</p></div></details>
+
+  <details><summary>一定要先做房屋健檢嗎？</summary><div class="a"><p>不一定。可以從最需要的地方開始。如果還不確定問題在哪裡，建議先從<a href="/check.html" target="_top">自我檢查</a>了解大概狀況，再決定是否安排健檢。</p></div></details>
+
+  <details><summary>BN-1000 可以自己施工嗎？</summary><div class="a"><p>Home Shield 規劃了 DIY 使用指引與專業施工協助兩種方向。實際適用範圍、施工方式與使用條件，以產品正式技術資料及現場評估為準。</p></div></details>
+
+  <details><summary>該自己動手，還是找專業施工？</summary><div class="a"><p>要依現場條件與問題範圍而定。建議先了解房屋狀況，再和我們討論適合產品、DIY 或專業施工的哪一種方向。</p></div></details>
+
+  <details><summary>什麼是房屋健康護照？</summary><div class="a"><p>這是 Home Shield 長期規劃的房屋維護紀錄概念，把房屋檢查、產品使用、施工改善與後續維護資訊逐步整理，讓屋主更容易掌握房屋的歷程。</p></div></details>
+
+  <details><summary>費用怎麼計算？</summary><div class="a"><p>費用會依房屋狀況、處理範圍與選擇的方案而不同。歡迎透過<a href="/contact.html" target="_top">合作洽詢</a>告訴我們你的狀況，我們再協助說明。</p></div></details>
+
+  <details><summary>企業、通路或投資方可以合作嗎？</summary><div class="a"><p>可以。無論是產品合作、施工服務、通路洽談或投資合作，都歡迎與 Home Shield 聯繫。</p></div></details>
+
+  <p class="note">以上為一般說明，實際內容以正式資料及現場評估為準。</p>
+</div>
+<script>
+(function(){
+  function send(){
+    var h=document.documentElement.scrollHeight;
+    try{parent.postMessage({hsHeight:h},'*')}catch(e){}
+  }
+  try{new ResizeObserver(send).observe(document.body)}catch(e){}
+  window.addEventListener('load',send);
+  document.addEventListener('toggle',function(){setTimeout(send,30)},true);
+  send();
+})();
+</script>
+</body>
+</html>
