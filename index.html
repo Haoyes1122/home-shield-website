@@ -211,4 +211,23 @@ window.addEventListener('message',function(e){
   },{threshold:.35});
   items.forEach(function(a){io.observe(a)});
 })();
+</script><div id="intro" style="position:fixed;inset:0;z-index:9999;background:#102638;display:flex;align-items:center;justify-content:center;transition:opacity .6s">
+  <iframe src="/video.html" title="Home Shield 開場動畫" style="border:0;height:min(640px,88vh);aspect-ratio:9/16;max-width:94vw;border-radius:18px"></iframe>
+  <button id="intro-skip" style="position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;padding:8px 18px;border-radius:99px;border:1px solid #fff;background:transparent;color:#fff;font-size:14px;cursor:pointer">略過 ✕</button>
+</div>
+<script>
+(function(){
+  var el=document.getElementById('intro');
+  try{ if(sessionStorage.getItem('hsIntro')){ el.remove(); return; } }catch(e){}
+  function close(){
+    try{ sessionStorage.setItem('hsIntro','1'); }catch(e){}
+    el.style.opacity='0';
+    setTimeout(function(){ el.remove(); },600);
+  }
+  document.getElementById('intro-skip').onclick=close;
+  window.addEventListener('message',function(e){
+    if(e.data==='hs-done'){ setTimeout(close,500); }
+  });
+  setTimeout(close,16000);
+})();
 </script></body></html>
