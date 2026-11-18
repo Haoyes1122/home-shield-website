@@ -159,6 +159,14 @@ window.addEventListener('message',function(e){
   var f=document.getElementById('faq-frame');
   if(f&&e.source===f.contentWindow&&e.data&&e.data.hsHeight){f.style.height=e.data.hsHeight+'px';}
 });
+</script><section style="display:flex;justify-content:center;padding:40px 20px">
+  <iframe id="faq-frame" src="/faq.html" title="常見問題" loading="lazy" style="border:0;width:100%;max-width:560px;height:560px"></iframe>
+</section>
+<script>
+window.addEventListener('message',function(e){
+  var f=document.getElementById('faq-frame');
+  if(f&&e.source===f.contentWindow&&e.data&&e.data.hsHeight){f.style.height=e.data.hsHeight+'px';}
+});
 </script><section class="contact section" id="contact">
       <div class="container contact-inner">
         <p class="section-kicker">LET'S TALK</p>
