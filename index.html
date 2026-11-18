@@ -218,7 +218,7 @@ window.addEventListener('message',function(e){
 <script>
 (function(){
   var el=document.getElementById('intro');
-  try{ if(sessionStorage.getItem('hsIntro')){ el.remove(); return; } }catch(e){}
+    try{ if(sessionStorage.getItem('hsIntro') && location.search.indexOf('intro')<0){ el.remove(); return; } }catch(e){}
   function close(){
     try{ sessionStorage.setItem('hsIntro','1'); }catch(e){}
     el.style.opacity='0';
