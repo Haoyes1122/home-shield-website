@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>房屋漏水自我檢查｜Home Shield</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap">
+<style>
+:root{--bg:#f2f5f7;--card:#fff;--ink:#102638;--mute:#5b6f7e;--line:#d5dee5;--water:#2b8fc0;--amber:#e08a1e;--red:#d2453b;--ok:#1f9d6b;--chip:#eaf1f6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1822;--card:#142636;--ink:#e4eef4;--mute:#93a9b8;--line:#27425a;--chip:#1c3347;--water:#52b4e2}}
+:root[data-theme="dark"]{--bg:#0c1822;--card:#142636;--ink:#e4eef4;--mute:#93a9b8;--line:#27425a;--chip:#1c3347;--water:#52b4e2}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.6;padding:16px}
+.wrap{max-width:560px;margin:0 auto}
+h1{font-size:22px;font-weight:900;line-height:1.35}
+.sub{color:var(--mute);font-size:14px;margin:6px 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+svg.h{display:block;width:min(220px,60%);margin:0 auto 4px;overflow:visible}
+.z{fill:var(--chip);stroke:var(--line);stroke-width:1.5;transition:fill .3s,stroke .3s}
+.z.hit{fill:rgba(224,138,30,.35);stroke:var(--amber)}
+.outline{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linejoin:round;opacity:.8}
+.zl{font-size:9px;fill:var(--mute);text-anchor:middle}
+.grp{margin-top:14px}
+.grp h2{font-size:15px;font-weight:700;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;cursor:pointer}
+.chip{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:99px;padding:8px 14px;font-size:14px;transition:all .2s}
+.chip[aria-pressed="true"]{background:var(--water);border-color:var(--water);color:#fff;font-weight:700}
+button:focus-visible,a:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+.meter{height:10px;border-radius:9px;background:var(--chip);overflow:hidden;margin:10px 0 12px}
+.meter b{display:block;height:100%;width:0;background:var(--ok);border-radius:9px;transition:width .5s,background .4s}
+.lvl{font-size:20px;font-weight:900}
+.msg{margin-top:6px;font-size:15px}
+.sel{margin-top:10px;font-size:13px;color:var(--mute)}
+.note{margin-top:10px;font-size:12px;color:var(--mute)}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn{border-radius:99px;padding:11px 20px;font-size:15px;font-weight:700;text-decoration:none;border:1px solid var(--water);text-align:center}
+.pri{background:var(--water);color:#fff}
+.sec{background:transparent;color:var(--water)}
+.reset{background:none;border:0;color:var(--mute);font-size:13px;text-decoration:underline;margin-top:10px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>房屋漏水自我檢查</h1>
+  <p class="sub">勾選家裡出現的徵兆，立即看到初步判讀與建議。約 1 分鐘完成。</p>
+
+  <div class="card">
+    <svg class="h" viewBox="0 0 200 170" aria-hidden="true">
+      <path class="z" id="z-roof" d="M20 74 100 16 180 74Z"/>
+      <rect class="z" id="z-ceil" x="20" y="74" width="160" height="22"/>
+      <rect class="z" id="z-wall" x="20" y="96" width="100" height="64"/>
+      <rect class="z" id="z-bath" x="120" y="96" width="60" height="64"/>
+      <path class="outline" d="M20 74 100 16 180 74V160H20Z"/>
+      <text class="zl" x="100" y="58">屋頂外牆</text><text class="zl" x="100" y="89">天花板</text>
+      <text class="zl" x="70" y="132">牆面</text><text class="zl" x="150" y="132">浴室陽台</text>
+    </svg>
+    <div id="groups"></div>
+  </div>
+
+  <div class="card" aria-live="polite">
+    <div class="lvl" id="lvl">尚未勾選</div>
+    <div class="meter"><b id="bar"></b></div>
+    <div class="msg" id="msg">請從上方勾選家裡看得到的徵兆。沒有的話，不用勾選。</div>
+    <div class="sel" id="sel"></div>
+    <div class="acts" id="acts" hidden>
+      <a class="btn pri" id="go" href="/contact.html" target="_top">預約房屋健檢</a>
+      <button class="btn sec" id="copy" type="button">複製檢查結果</button>
+    </div>
+    <button class="reset" id="reset" type="button" hidden>重新檢查</button>
+    <p class="note">此為依徵兆數量與位置所做的初步參考，不能取代專業人員的現場評估。實際原因與處理方式，以現場檢查為準。</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var G=[
+    {k:'roof',t:'屋頂與外牆',i:[['頂樓地面龜裂或積水',3],['外牆有裂縫',3]]},
+    {k:'ceil',t:'天花板',i:[['出現水痕或黃斑',3],['油漆鼓起或剝落',2],['下雨後會滴水',4]]},
+    {k:'wall',t:'牆面',i:[['壁癌或白色結晶',3],['摸起來潮濕',2],['油漆或壁紙起泡',2],['有霉味或黑斑',2]]},
+    {k:'bath',t:'浴室與陽台',i:[['磁磚縫發黑或滲水',2],['地面長期積水',2],['樓下鄰居反映漏水',4]]}
+  ];
+  var L=[
+    {min:0,n:'目前沒有明顯徵兆',c:'#1f9d6b',m:'建議每年檢查一次，尤其在雨季前後。並拍照留存現況，之後比較變化才有依據。'},
+    {min:1,n:'輕微徵兆',c:'#e0a21e',m:'建議先拍照記錄位置與範圍，下雨後再觀察是否擴大。若持續出現，再安排檢查。'},
+    {min:5,n:'中等風險',c:'#e08a1e',m:'建議安排房屋健檢，先找出水的來源，再決定處理方式，避免只處理表面。'},
+    {min:10,n:'較高風險',c:'#d2453b',m:'徵兆較多或已影響他人，可能不只是單一位置的問題。建議盡快預約房屋健檢。'}
+  ];
+  var box=document.getElementById('groups'),on={};
+  G.forEach(function(g){
+    var d=document.createElement('div');d.className='grp';
+    d.innerHTML='<h2>'+g.t+'</h2><div class="chips"></div>';
+    g.i.forEach(function(it){
+      var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=it[0];b.setAttribute('aria-pressed','false');
+      b.onclick=function(){var id=g.k+'|'+it[0];if(on[id]){delete on[id];b.setAttribute('aria-pressed','false')}else{on[id]={g:g.k,w:it[1],t:it[0],gt:g.t};b.setAttribute('aria-pressed','true')}update()};
+      d.lastChild.appendChild(b);
+    });
+    box.appendChild(d);
+  });
+  function level(s){var r=L[0];L.forEach(function(l){if(s>=l.min&&(s>0||l.min===0))r=l});return s===0?L[0]:r}
+  function summary(){
+    var ids=Object.keys(on),s=0,t=[];ids.forEach(function(k){s+=on[k].w;t.push(on[k].gt+'：'+on[k].t)});
+    return {s:s,n:ids.length,t:t};
+  }
+  function update(){
+    var r=summary(),l=level(r.s),n=r.n;
+    G.forEach(function(g){var hit=Object.keys(on).some(function(k){return on[k].g===g.k});document.getElementById('z-'+g.k).classList.toggle('hit',hit)});
+    document.getElementById('lvl').textContent=n?l.n:'尚未勾選';
+    document.getElementById('lvl').style.color=n?l.c:'';
+    var bar=document.getElementById('bar');bar.style.width=Math.min(100,r.s/12*100)+'%';bar.style.background=l.c;
+    document.getElementById('msg').textContent=n?l.m:'請從上方勾選家裡看得到的徵兆。沒有的話，不用勾選。';
+    document.getElementById('sel').textContent=n?'已勾選 '+n+' 項：'+r.t.join('、'):'';
+    document.getElementById('acts').hidden=!n;
+    document.getElementById('reset').hidden=!n;
+  }
+  document.getElementById('reset').onclick=function(){on={};[].forEach.call(document.querySelectorAll('.chip'),function(b){b.setAttribute('aria-pressed','false')});update()};
+  document.getElementById('copy').onclick=function(){
+    var r=summary(),l=level(r.s);
+    var txt='【Home Shield 房屋自我檢查】\n初步判讀：'+l.n+'\n勾選徵兆：\n'+r.t.join('\n');
+    var btn=this;
+    function done(ok){btn.textContent=ok?'已複製':'請手動複製上方內容';setTimeout(function(){btn.textContent='複製檢查結果'},2000)}
+    try{navigator.clipboard.writeText(txt).then(function(){done(true)},function(){done(false)})}catch(e){done(false)}
+  };
+  update();
+})();
+</script>
+</body>
+</html>
