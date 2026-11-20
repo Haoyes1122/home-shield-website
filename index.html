@@ -203,25 +203,12 @@ window.addEventListener('message',function(e){
   },{threshold:.35});
   items.forEach(function(a){io.observe(a)});
 })();
-</script><div id="intro" style="position:fixed;inset:0;z-index:9999;background:#102638;display:flex;align-items:center;justify-content:center;transition:opacity .6s">
+</script></script><div id="intro" style="position:fixed;inset:0;z-index:9999;background:#102638;display:flex;align-items:center;justify-content:center;transition:opacity .6s">
   <iframe src="/video.html" title="Home Shield 開場動畫" style="border:0;height:min(640px,88vh);aspect-ratio:9/16;max-width:94vw;border-radius:18px"></iframe>
   <button id="intro-skip" style="position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;padding:8px 18px;border-radius:99px;border:1px solid #fff;background:transparent;color:#fff;font-size:14px;cursor:pointer">略過 ✕</button>
 </div>
 <script>
-(function(){
-  var el=document.getElementById('intro');
-    try{ if(sessionStorage.getItem('hsIntro') && location.search.indexOf('intro')<0){ el.remove(); return; } }catch(e){}
-  function close(){
-    try{ sessionStorage.setItem('hsIntro','1'); }catch(e){}
-    el.style.opacity='0';
-    setTimeout(function(){ el.remove(); },600);
-  }
-  document.getElementById('intro-skip').onclick=close;
-  window.addEventListener('message',function(e){
-    if(e.data==='hs-done'){ setTimeout(close,500); }
-  });
-  setTimeout(close,16000);
-})();
+
 </script><style>
 #hs-music{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:9000;width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.6);background:#102638;color:#fff;font-size:20px;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.25)}
 #hs-music:focus-visible{outline:3px solid #3fa7d6;outline-offset:3px}
