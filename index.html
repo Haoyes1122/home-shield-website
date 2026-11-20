@@ -231,8 +231,61 @@ window.addEventListener('message',function(e){
 @media (prefers-reduced-motion:reduce){#hs-music[aria-pressed="true"]::after{animation:none}}
 </style>
 <button id="hs-music" type="button" aria-label="播放背景音樂" aria-pressed="false">♪</button>
-<audio id="hs-audio" src="/music.mp3" loop preload="none"></audio>
+<audio id="hs-audio" src="/music.mp3" loop preload="auto"></audio>
 <script>
+(function(){
+  var b=document.getElementById('hs-music'),a=document.getElementById('hs-audio');
+  if(!b||!a)return;
+  a.volume=.4;
+  var KEY='hsMusicOff',off=false,armed=false;
+  try{off=sessionStorage.getItem(KEY)==='1'}catch(e){}
+  function ui(on){
+    b.setAttribute('aria-pressed',on?'true':'false');
+    b.setAttribute('aria-label',on?'停止背景音樂':'播放背景音樂');
+    b.textContent=on?'■':'♪';
+  }
+  a.addEventListener('playing',function(){ui(true)});
+  a.addEventListener('pause',function(){ui(false)});
+  a.addEventListener('error',function(){b.textContent='!';b.setAttribute('aria-label','音樂載入失敗，請確認 music.mp3 已上傳')});
+  function arm(){
+    if(armed)return;armed=true;
+    var evs=['pointerdown','keydown','touchend'];
+    function go(e){
+      if(e&&e.target&&b.contains(e.target))return;
+      evs.forEach(function(n){document.removeEventListener(n,go,true)});
+      armed=false;
+      if(!off&&a.paused){var p=a.play();if(p&&p.catch)p.catch(function(){})}
+    }
+    evs.forEach(function(n){document.addEventListener(n,go,true)});
+  }
+  function start(){
+    if(off)return;
+    var p=a.play();
+    if(p&&p.catch)p.catch(arm);
+  }
+  b.addEventListener('click',function(){
+    if(a.paused){
+      off=false;try{sessionStorage.removeItem(KEY)}catch(e){}
+      var p=a.play();if(p&&p.catch)p.catch(function(){});
+    }else{
+      a.pause();off=true;try{sessionStorage.setItem(KEY,'1')}catch(e){}
+    }
+  });
+  window.addEventListener('message',function(e){
+    if(e.data==='hs-song-play'&&!a.paused){a.pause();ui(false)}
+  });
+  var intro=document.getElementById('intro');
+  if(intro){
+    var skip=document.getElementById('intro-skip');
+    if(skip)skip.addEventListener('click',start);
+    new MutationObserver(function(m,o){
+      if(!document.getElementById('intro')){o.disconnect();start()}
+    }).observe(document.body,{childList:true});
+  }else{
+    start();
+  }
+})();
+</script>
 (function(){
   var b=document.getElementById('hs-music'),a=document.getElementById('hs-audio');
   if(!b||!a)return;
