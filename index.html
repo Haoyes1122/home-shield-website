@@ -211,7 +211,85 @@ window.addEventListener('message',function(e){
 @keyframes hsring{from{transform:scale(1);opacity:.8}to{transform:scale(1.6);opacity:0}}
 @media (prefers-reduced-motion:reduce){#hs-music[aria-pressed="true"]::after{animation:none}}
 </style>
-<button id="hs-music" type="button" aria-label="播放背景音樂" aria-pressed="false">♪</button>
+<button id="hs-music" type="button" aria-label="播放背景音樂" aria-pressed="false">♪</button><div id="intro" style="position:fixed;inset:0;z-index:2147483000;background:#102638;display:flex;align-items:center;justify-content:center;transition:opacity .6s">
+  <iframe id="intro-frame" title="Home Shield 開場動畫" style="border:0;height:min(640px,88vh);aspect-ratio:9/16;max-width:94vw;border-radius:18px;visibility:hidden"></iframe>
+  <button id="intro-enter" type="button" style="position:absolute;inset:0;background:#102638;border:0;color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-family:inherit;padding:24px">
+    <span style="letter-spacing:.2em;font-size:14px;color:#3fa7d6;font-weight:700">HOME SHIELD</span>
+    <span style="font-size:28px;font-weight:900;line-height:1.4;text-align:center">守護家的每一寸<br>從防水開始</span>
+    <span style="margin-top:12px;padding:12px 28px;border-radius:99px;background:#2b8fc0;font-size:16px;font-weight:700">點擊進入</span>
+    <span style="font-size:12px;opacity:.7">本站有背景音樂，可隨時在左下角停止</span>
+  </button>
+  <button id="intro-skip" type="button" style="position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;padding:8px 18px;border-radius:99px;border:1px solid #fff;background:transparent;color:#fff;font-size:14px;cursor:pointer;z-index:2">略過 ✕</button>
+</div>
+<audio id="hs-audio" src="/music.mp3" loop preload="auto"></audio>
+<script>
+(function(){
+  var el=document.getElementById('intro'),b=document.getElementById('hs-music'),a=document.getElementById('hs-audio');
+  var f=document.getElementById('intro-frame'),enter=document.getElementById('intro-enter'),skip=document.getElementById('intro-skip');
+  if(!a||!b)return;
+  a.volume=.4;
+  var KEY='hsMusicOff',off=false,started=false,closed=false,mutedStart=false,armed=false;
+  try{off=sessionStorage.getItem(KEY)==='1'}catch(e){}
+  function ui(on){b.setAttribute('aria-pressed',on?'true':'false');b.setAttribute('aria-label',on?'停止背景音樂':'播放背景音樂');b.textContent=on?'■':'♪'}
+  a.addEventListener('playing',function(){if(!a.muted)ui(true)});
+  a.addEventListener('pause',function(){ui(false)});
+  a.addEventListener('error',function(){b.textContent='!';b.setAttribute('aria-label','音樂載入失敗，請確認 music.mp3 已上傳')});
+  function arm(){
+    if(armed)return;armed=true;
+    var evs=['pointerdown','keydown','touchend'];
+    function go(e){
+      if(e&&e.target&&b.contains(e.target))return;
+      evs.forEach(function(n){document.removeEventListener(n,go,true)});
+      armed=false;
+      if(!off&&a.paused){a.muted=false;var p=a.play();if(p&&p.catch)p.catch(function(){})}
+    }
+    evs.forEach(function(n){document.addEventListener(n,go,true)});
+  }
+  function playWithSound(rewind){
+    if(off)return;
+    a.muted=false;
+    if(rewind)a.currentTime=0;
+    var p=a.play();if(p&&p.catch)p.catch(arm);
+  }
+  function hideIntro(){
+    var n=document.querySelectorAll('[id=intro]');
+    for(var i=0;i<n.length;i++){n[i].style.opacity='0';n[i].style.pointerEvents='none'}
+    setTimeout(function(){for(var i=0;i<n.length;i++){n[i].style.display='none'}},600);
+  }
+  function close(){
+    if(closed)return;closed=true;
+    try{sessionStorage.setItem('hsIntro','1')}catch(e){}
+    hideIntro();
+    if(mutedStart&&!a.paused){a.currentTime=0;a.muted=false;ui(true)}
+    else playWithSound(true);
+  }
+  b.addEventListener('click',function(){
+    if(a.paused){off=false;try{sessionStorage.removeItem(KEY)}catch(e){}a.muted=false;var p=a.play();if(p&&p.catch)p.catch(function(){})}
+    else{a.pause();off=true;try{sessionStorage.setItem(KEY,'1')}catch(e){}}
+  });
+  window.addEventListener('message',function(e){
+    if(e.data==='hs-song-play'&&!a.paused){a.pause();ui(false)}
+    if(e.data==='hs-done'&&started){setTimeout(close,500)}
+  });
+  var seen=false;try{seen=!!sessionStorage.getItem('hsIntro')&&location.search.indexOf('intro')<0}catch(e){}
+  if(!el||seen){
+    if(el)el.style.display='none';
+    closed=true;playWithSound(false);
+    return;
+  }
+  enter.addEventListener('click',function(){
+    if(started)return;started=true;
+    if(!off){a.muted=true;mutedStart=true;var p=a.play();if(p&&p.catch)p.catch(function(){mutedStart=false})}
+    f.src='/video.html';f.style.visibility='visible';enter.style.display='none';
+    setTimeout(close,16000);
+  });
+  skip.addEventListener('click',function(){
+    if(!closed&&!off){mutedStart=false;a.muted=false;a.currentTime=0;var p=a.play();if(p&&p.catch)p.catch(arm)}
+    closed=true;try{sessionStorage.setItem('hsIntro','1')}catch(e){}
+    hideIntro();
+  });
+})();
+</script>
 (function(){
   var b=document.getElementById('hs-music'),a=document.getElementById('hs-audio');
   if(!b||!a)return;
