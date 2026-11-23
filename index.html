@@ -296,23 +296,5 @@ document.getElementById('form-open').addEventListener('click',function(){
 })();
 </script>
 
-</script><style>html,body{overflow-x:clip;max-width:100%}</style><script>
-try{history.scrollRestoration='manual'}catch(e){}
-window.hsScrolled=false;
-['wheel','touchmove','keydown'].forEach(function(n){window.addEventListener(n,function(){window.hsScrolled=true},{passive:true})});
-window.hsTop=function(){
-  if(location.hash)return;
-  window.hsScrolled=false;
-  [0,150,500,1200,2500].forEach(function(ms){setTimeout(function(){if(!window.hsScrolled)window.scrollTo(0,0)},ms)});
-};
-window.hsTop();
-(function(){
-  var f=document.querySelector('iframe[data-src]');
-  if(!f)return;
-  function load(){if(f.dataset.src){f.src=f.dataset.src;f.removeAttribute('data-src')}}
-  if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(en){if(en[0].isIntersecting){io.disconnect();load()}},{rootMargin:'200px'});
-    io.observe(f);
-  }else{setTimeout(load,6000)}
-})();
+</script><style>html,body{overflow-x:clip;max-width:100%}</style>
 </script></body></html>
