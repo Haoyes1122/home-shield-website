@@ -74,13 +74,47 @@ body{background:var(--page);color:var(--ink);font-family:"Noto Sans TC","PingFan
 button{font:inherit;font-size:14px;padding:8px 18px;border-radius:99px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
 button:focus-visible{outline:3px solid var(--water);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.c0 .drop,.c1 .drop,.c4 .drop,.c6 .scan,.sc .ring,.c6 .flash,.c12 .flash{animation:none}.stain,.coatg{transition-duration:.01s!important}}
+
+.stage{position:absolute;inset:0;transform-origin:50% 36%;transition:transform 1.4s ease}
+.stage.sc{transform:scale(1.07)}
+.bg{position:absolute;inset:0;opacity:0;transition:opacity 1.6s}
+.bg1{background:linear-gradient(#08121b,#1b2b39)}
+.bg2{background:radial-gradient(circle at 50% 38%,#1f78a8,#102638 72%)}
+.bg3{background:linear-gradient(rgba(63,167,214,.09) 1px,transparent 1px) 0 0/100% 8cqw,linear-gradient(90deg,rgba(63,167,214,.09) 1px,transparent 1px) 0 0/8cqw 100%,linear-gradient(#0c2232,#123446)}
+.bg4{background:radial-gradient(circle at 50% 38%,#2a95c9,#0d2434 72%)}
+.bg5{background:linear-gradient(#1b2740,#4a3d58 58%,#d08a5e)}
+.bg6{background:radial-gradient(circle at 50% 36%,#f2a541 0,#3fa7d6 34%,#102638 78%)}
+.m1 .bg1,.m2 .bg2,.m3 .bg3,.m4 .bg4,.m5 .bg5,.m6 .bg6{opacity:1}
+.rain{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1s}
+.m1 .rain{opacity:1}
+.rain i{position:absolute;top:-12cqw;width:.45cqw;height:7cqw;background:linear-gradient(transparent,rgba(170,215,242,.7));animation:rfall linear infinite}
+@keyframes rfall{to{transform:translateY(200cqw)}}
+.sun{position:absolute;left:50%;top:34cqw;width:80cqw;height:80cqw;margin-left:-40cqw;border-radius:50%;background:radial-gradient(circle,rgba(255,217,138,.95),rgba(242,165,65,0) 68%);opacity:0;transform:translateY(34cqw) scale(.6);transition:opacity 2.4s,transform 3s ease-out;pointer-events:none}
+.g12 .sun{opacity:.85;transform:none}
+.bw{position:absolute;left:0;right:0;top:50cqw;text-align:center;font-size:30cqw;font-weight:900;color:#fff;opacity:0;pointer-events:none;white-space:nowrap}
+.bw.on{animation:bwp 1.6s ease-out}
+@keyframes bwp{0%{opacity:0;transform:scale(1.5)}18%{opacity:.2;transform:scale(1)}100%{opacity:0;transform:scale(.94)}}
+.rpt{position:absolute;left:5cqw;top:22cqw;width:38cqw;padding:3cqw;border-radius:3cqw;background:rgba(10,30,44,.9);border:1px solid var(--water);font-size:3.4cqw;font-weight:700;opacity:0;transform:translateX(-8cqw);transition:opacity .5s,transform .5s}
+.rpt em{font-style:normal;color:var(--water);letter-spacing:.12em;font-size:3cqw;display:block;margin-bottom:1.6cqw}
+.rpt div{display:flex;justify-content:space-between;padding:1.2cqw 0;border-top:1px solid rgba(255,255,255,.15);opacity:0;transition:opacity .4s var(--d)}
+.rpt b{color:#5fe0a6}
+.g6 .rpt{opacity:1;transform:none}
+.g6 .rpt div{opacity:1}
+.g7 .rpt{opacity:0;transform:translateX(-8cqw)}
+.sp{position:absolute;inset:0;pointer-events:none}
+.sp i{position:absolute;border-radius:50%;background:#fff;opacity:0}
+.g14 .sp i{animation:tw 2.6s ease-in-out infinite}
+@keyframes tw{0%{opacity:0;transform:translateY(4cqw) scale(.4)}50%{opacity:.95}100%{opacity:0;transform:translateY(-12cqw) scale(1)}}
+@media (prefers-reduced-motion:reduce){.rain{display:none}.g14 .sp i,.bw.on{animation:none}.stage.sc{transform:none}}
 </style>
 </head>
 <body>
 <div id="frame" role="button" tabindex="0" aria-label="播放或暫停歌曲動畫">
+  <div class="bg bg1"></div><div class="bg bg2"></div><div class="bg bg3"></div><div class="bg bg4"></div><div class="bg bg5"></div><div class="bg bg6"></div>
   <div class="tagline">HOME SHIELD</div>
   <div class="dbg" id="dbg" hidden></div>
 
+  <div class="rain" id="rain"></div><div class="sun"></div><div class="bw" id="bw"></div>
   <div id="stage" class="stage">
   <svg class="house" viewBox="0 0 200 170" aria-hidden="true">
     <defs><clipPath id="hc"><path d="M20 74 100 16 180 74V160H20Z"/></clipPath></defs>
@@ -107,6 +141,8 @@ button:focus-visible{outline:3px solid var(--water);outline-offset:2px}
       <line class="scan" x1="154" y1="0" x2="186" y2="0"/>
     </g>
   </svg>
+  <div class="rpt"><em>AI 診斷</em><div style="--d:.8s">濕度偵測<b>✓</b></div><div style="--d:1.8s">裂縫辨識<b>✓</b></div><div style="--d:2.8s">處理建議<b>✓</b></div></div>
+  <div class="sp" id="sp"></div>
   <div class="chips"><span class="chip" style="--d:0s">防水</span><span class="chip" style="--d:.15s">止滑</span><span class="chip" style="--d:.3s">安心</span></div>
   <div class="url"><span>home-shield-website.shihhao1122.workers.dev</span></div>
   </div>
@@ -139,12 +175,21 @@ button:focus-visible{outline:3px solid var(--water);outline-offset:2px}
       ovt=document.getElementById('ovt'),ovs=document.getElementById('ovs'),dbg=document.getElementById('dbg'),
       cur=-2,raf=0;
   if(location.search.indexOf('debug')>-1)dbg.hidden=false;
+  var rain=document.getElementById('rain'),sp=document.getElementById('sp'),bw=document.getElementById('bw'),WORDS=['別拖啦','來啦','漏水啦','守護家'];
+  for(var r=0;r<16;r++){var d=document.createElement('i');d.style.left=(r*6.4+Math.random()*4)+'%';d.style.animationDuration=(.8+Math.random()*.6)+'s';d.style.animationDelay=(-Math.random()*1.4)+'s';rain.appendChild(d)}
+  for(var q=0;q<22;q++){var e=document.createElement('i'),z=(.8+Math.random()*1.4);e.style.cssText='left:'+(4+Math.random()*92)+'%;top:'+(18+Math.random()*60)+'%;width:'+z+'cqw;height:'+z+'cqw;animation-delay:'+(Math.random()*2.6)+'s';sp.appendChild(e)}
+  function modeOf(k){return k<0?0:k<2?1:k<6?2:k<8?3:k<12?4:k<14?5:6}
+  function isCh(k){return k>=0&&LINES[k][2]==='c'}
   function idxAt(t){var k=-1;for(var i=0;i<LINES.length;i++)if(t>=LINES[i][0])k=i;return k}
   function apply(k){
     if(k===cur)return;cur=k;
     var c='stage';for(var i=0;i<=k;i++)c+=' g'+i;
     if(k>=0){c+=' c'+k;if(LINES[k][2]==='c')c+=' sc'}
     stage.className=c;
+    for(var m=0;m<=6;m++)frame.classList.remove('m'+m);
+    frame.classList.add('m'+modeOf(k));
+    bw.className='bw';
+    if(isCh(k)){var base=k<6?2:k<12?8:14;bw.textContent=WORDS[k-base];void bw.offsetWidth;bw.className='bw on'}else bw.textContent='';
     lyric.className='';lyric.innerHTML=k>=0?'<span></span>':'';
     if(k>=0){lyric.firstChild.textContent=LINES[k][1];void lyric.offsetWidth;lyric.className='in'}
   }
