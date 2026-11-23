@@ -316,4 +316,14 @@ window.hsTop();
     io.observe(f);
   }else{setTimeout(load,6000)}
 })();
+</script><script>
+(function(){
+  var done=false;
+  window.addEventListener('scroll',function(){
+    if(done||window.scrollY<400)return;
+    done=true;
+    var ae=document.activeElement;
+    alert('跳動 '+Math.round(window.scrollY)+'px\n距離開啟 '+Math.round(performance.now())+'ms\n焦點：'+(ae?ae.tagName+' #'+ae.id+' .'+ae.className:'無')+'\n網址：'+location.href);
+  },{passive:true});
+})();
 </script></body></html>
