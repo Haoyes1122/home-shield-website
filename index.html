@@ -299,15 +299,11 @@ window.addEventListener('message',function(e){
   window.addEventListener('message',function(e){
     if(e.data==='hs-song-play'&&!a.paused){a.pause();ui(false)}
   });
-  var intro=document.getElementById('intro');
-  if(intro){
-    var skip=document.getElementById('intro-skip');
-    if(skip)skip.addEventListener('click',start);
-    new MutationObserver(function(m,o){
-      if(!document.getElementById('intro')){o.disconnect();start()}
-    }).observe(document.body,{childList:true});
-  }else{
+    var intro=document.getElementById('intro');
+  if(!intro||intro.style.display==='none'){
     start();
+  }else{
+    window.addEventListener('hs-intro-closed',start);
   }
 })();
 </script>
