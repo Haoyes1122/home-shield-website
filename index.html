@@ -292,18 +292,7 @@ window.addEventListener('message',function(e){
   });
 })();
 </script>
-(function(){
-  var b=document.getElementById('hs-music'),a=document.getElementById('hs-audio');
-  if(!b||!a)return;
-  a.volume=.4;
-  function set(on){b.setAttribute('aria-pressed',on?'true':'false');b.setAttribute('aria-label',on?'暫停背景音樂':'播放背景音樂');b.textContent=on?'❚❚':'♪'}
-  b.addEventListener('click',function(){
-    if(a.paused){var p=a.play();if(p&&p.catch)p.catch(function(){set(false)});set(true)}
-    else{a.pause();set(false)}
-  });
-  window.addEventListener('message',function(e){if(e.data==='hs-song-play'&&!a.paused){a.pause();set(false)}});
-  document.addEventListener('visibilitychange',function(){if(document.hidden&&!a.paused){a.pause();set(false)}});
-})();
+
 </script><style>html,body{overflow-x:clip;max-width:100%}</style><script>
 try{history.scrollRestoration='manual'}catch(e){}
 window.hsScrolled=false;
