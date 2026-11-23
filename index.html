@@ -253,6 +253,7 @@ window.addEventListener('message',function(e){
     var p=a.play();if(p&&p.catch)p.catch(arm);
   }
   function hideIntro(){
+        if(window.hsTop)window.hsTop();
     var n=document.querySelectorAll('[id=intro]');
     for(var i=0;i<n.length;i++){n[i].style.opacity='0';n[i].style.pointerEvents='none'}
     setTimeout(function(){for(var i=0;i<n.length;i++){n[i].style.display='none'}},600);
