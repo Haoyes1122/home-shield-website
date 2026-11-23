@@ -303,4 +303,15 @@ window.addEventListener('message',function(e){
   window.addEventListener('message',function(e){if(e.data==='hs-song-play'&&!a.paused){a.pause();set(false)}});
   document.addEventListener('visibilitychange',function(){if(document.hidden&&!a.paused){a.pause();set(false)}});
 })();
-</script><style>html,body{overflow-x:clip;max-width:100%}</style></body></html>
+</script><style>html,body{overflow-x:clip;max-width:100%}</style><script>
+try{history.scrollRestoration='manual'}catch(e){}
+if(!location.hash){
+  var hsT0=Date.now();
+  (function hsTop(){
+    if(Date.now()-hsT0<2500&&!window.__hsScrolled){window.scrollTo(0,0);setTimeout(hsTop,200)}
+  })();
+  ['wheel','touchmove','keydown','mousedown'].forEach(function(n){
+    window.addEventListener(n,function(){window.__hsScrolled=1},{once:true,passive:true});
+  });
+}
+</script></body></html>
