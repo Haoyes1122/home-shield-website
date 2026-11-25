@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>用 LINE 聯絡我們｜Home Shield</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap">
+<style>
+:root{--bg:#f2f5f7;--card:#fff;--ink:#102638;--mute:#5b6f7e;--line:#d5dee5;--water:#2b8fc0;--green:#06c755;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1822;--card:#142636;--ink:#e4eef4;--mute:#93a9b8;--line:#27425a;--water:#52b4e2}}
+:root[data-theme="dark"]{--bg:#0c1822;--card:#142636;--ink:#e4eef4;--mute:#93a9b8;--line:#27425a;--water:#52b4e2}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.6;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px 22px;text-align:center}
+.tag{font-size:12px;letter-spacing:.16em;color:var(--water);font-weight:700}
+h1{font-size:24px;font-weight:900;line-height:1.35;margin:8px 0 6px}
+.sub{color:var(--mute);font-size:15px}
+.status{margin-top:18px;font-size:15px;font-weight:700;min-height:24px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--water);border-radius:50%;vertical-align:-2px;margin-right:8px;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.btn{display:block;width:100%;margin-top:16px;padding:15px 20px;border-radius:99px;background:var(--green);color:#102638;font:700 17px/1.2 inherit;text-decoration:none;border:0;cursor:pointer}
+.btn.sec{background:transparent;color:var(--water);border:1px solid var(--water);font-size:15px;padding:12px 20px}
+.btn:focus-visible,a:focus-visible,button:focus-visible{outline:3px solid var(--water);outline-offset:3px}
+.qr{margin-top:20px;display:none}
+.qr.show{display:block}
+.qr img{width:200px;height:200px;border-radius:12px;background:#fff;padding:8px;border:1px solid var(--line)}
+.qr p{font-size:13px;color:var(--mute);margin-top:8px}
+.id{margin-top:14px;font-size:14px;color:var(--mute)}
+.id b{color:var(--ink)}
+.back{display:inline-block;margin-top:18px;font-size:14px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="tag">HOME SHIELD</div>
+  <h1>用 LINE 聯絡我們</h1>
+  <p class="sub">傳照片、說明狀況，我們會協助了解。</p>
+
+  <div class="status" id="status" aria-live="polite"></div>
+  <a class="btn" id="open" href="https://lin.ee/t9p1xaT" rel="noopener">開啟 LINE 官方帳號</a>
+
+  <div class="qr" id="qr">
+    <img id="qrimg" src="https://qr-official.line.me/gs/M_354cmfkn_GW.png?oat_content=url" alt="Home Shield LINE 官方帳號 QR code" width="200" height="200">
+    <p id="qrcap">也可以用手機的 LINE 掃描 QR code 加入好友。</p>
+  </div>
+
+  <p class="id">LINE ID：<b>@354cmfkn</b></p>
+  <button class="btn sec" id="copy" type="button">複製 LINE ID</button>
+  <a class="back" href="/">回到首頁</a>
+</main>
+
+<script>
+(function(){
+  var URL_='https://lin.ee/t9p1xaT',ID='@354cmfkn';
+  var st=document.getElementById('status'),qr=document.getElementById('qr'),open=document.getElementById('open'),img=document.getElementById('qrimg');
+  var ua=navigator.userAgent||'';
+  var mobile=/Android|iPhone|iPad|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  var manual=location.search.indexOf('manual')>-1,seen=false;
+  try{seen=sessionStorage.getItem('hsLineOpened')==='1'}catch(e){}
+
+  img.addEventListener('error',function(){img.style.display='none';document.getElementById('qrcap').textContent='QR code 暫時無法顯示，請改用上方按鈕或複製 LINE ID。'});
+
+  if(mobile){
+    if(manual||seen){
+      st.textContent='點下方按鈕開啟 LINE。';
+    }else{
+      st.innerHTML='<span class="spin"></span>正在開啟 LINE…';
+      try{sessionStorage.setItem('hsLineOpened','1')}catch(e){}
+      setTimeout(function(){location.href=URL_},900);
+      setTimeout(function(){st.textContent='沒有自動開啟嗎？請點下方按鈕。'},3500);
+    }
+  }else{
+    qr.classList.add('show');
+    st.textContent='請用手機的 LINE 掃描 QR code，或點下方按鈕。';
+    open.setAttribute('target','_blank');
+  }
+
+  document.getElementById('copy').addEventListener('click',function(){
+    var b=this;
+    function done(ok){b.textContent=ok?'已複製，可在 LINE 搜尋':'請手動複製：'+ID;setTimeout(function(){b.textContent='複製 LINE ID'},2500)}
+    try{navigator.clipboard.writeText(ID).then(function(){done(true)},function(){done(false)})}catch(e){done(false)}
+  });
+})();
+</script>
+</body>
+</html>
