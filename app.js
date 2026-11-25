@@ -128,3 +128,23 @@
     window.addEventListener('scroll',chk,{passive:true});chk();
   });
 })();
+;(function(){
+  function ready(f){document.readyState==='loading'?document.addEventListener('DOMContentLoaded',f):f()}
+  ready(function(){
+    var old=document.getElementById('hs-line');if(old&&old.parentNode)old.parentNode.removeChild(old);
+    var a=document.createElement('a');
+    a.id='hs-line';a.href='/line.html';a.target='_blank';a.rel='noopener';
+    a.setAttribute('aria-label','用 LINE 洽詢 Home Shield');
+    a.style.cssText='position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:2147482000;display:flex;align-items:center;gap:8px;width:auto;height:auto;max-width:none;margin:0;padding:12px 18px;box-sizing:border-box;border-radius:99px;background:#06c755;color:#102638;font-weight:700;font-size:15px;line-height:1;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.3);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .3s,transform .3s';
+    a.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="width:20px;height:20px;max-width:none;flex:none;display:block"><path fill="#102638" d="M12 3C6.5 3 2 6.6 2 11c0 2.5 1.5 4.7 3.8 6.2L5 21l4-2.1c.9.2 1.9.3 3 .3 5.5 0 10-3.6 10-8S17.5 3 12 3z"/></svg><span>LINE 洽詢</span>';
+    document.body.appendChild(a);
+    var home=document.body.classList.contains('home-page');
+    function chk(){
+      var on=!home||window.scrollY>400;
+      a.style.opacity=on?'1':'0';
+      a.style.transform=on?'none':'translateY(12px)';
+      a.style.pointerEvents=on?'auto':'none';
+    }
+    window.addEventListener('scroll',chk,{passive:true});chk();
+  });
+})();
