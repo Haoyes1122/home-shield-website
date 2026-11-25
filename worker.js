@@ -70,8 +70,9 @@ export default {
       return json(await classify(env, img));
     } catch (e) {
       const msg = String((e && e.message) || e);
-      if (/neuron|daily|allocation|quota|4006/i.test(msg)) return json({ error: 'quota' }, 429);
-      return json({ error: 'ai' }, 502);
+      const dbg = body && body.debug === true ? { detail: msg.slice(0, 300) } : {};
+      if (/neuron|daily|allocation|quota|4006/i.test(msg)) return json({ error: 'quota', ...dbg }, 429);
+      return json({ error: 'ai', ...dbg }, 502);
     }
   }
 };

@@ -103,13 +103,13 @@ button,.btn{font:inherit;cursor:pointer}
     if(go.disabled)return;
     go.disabled=true;res.style.display='none';
     msg.className='msg';msg.innerHTML='<span class="spin"></span>分析中，請稍候…';
-    fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:data})})
+    fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:data,debug:location.search.indexOf('debug')>-1})})
       .then(function(r){return r.json().then(function(j){return{s:r.status,j:j}})})
       .then(function(o){
         if(o.s===200&&o.j&&o.j.category){show(o.j);say('');}
         else if(o.j&&o.j.error==='quota')say('今天的免費分析額度已用完，請明天再試，或直接用 LINE 傳照片給我們。',true);
         else if(o.j&&o.j.error==='rate')say('分析次數太頻繁，請稍後再試。',true);
-        else say('目前無法分析，請稍後再試，或直接用 LINE 傳照片給我們。',true);
+        else say('目前無法分析，請稍後再試，或直接用 LINE 傳照片給我們。'+(o.j&&o.j.detail?' ['+o.j.detail+']':(location.search.indexOf('debug')>-1?' [HTTP '+o.s+']':'')),true);
       })
       .catch(function(){say('連線失敗，請檢查網路後再試。',true)})
       .then(function(){sync()});
