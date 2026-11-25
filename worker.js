@@ -26,18 +26,34 @@ function limited(ip) {
   return list.length > 8;
 }
 
-async function classify(env, image) {
-  const args = { messages: [{ role: 'user', content: PROMPT }], image, max_tokens: 100, temperature: 0.1 };
-  let r;
-  try {
-    r = await env.AI.run(MODEL, args);
-  } catch (e) {
-    // 第一次使用需同意 Meta 的授權條款，這裡自動處理一次
-    if (/agree|license|acceptable use/i.test(String((e && e.message) || e))) {
-      await env.AI.run(MODEL, { prompt: 'agree' });
-      r = await env.AI.run(MODEL, args);
-    } else throw e;
+// 依序嘗試幾種輸入格式，直到其中一種成功（不同版本的模型接受的格式略有差異）
+async function runModel(env, image) {
+  const base = { max_tokens: 100, temperature: 0.1 };
+  const variants = [
+    { prompt: PROMPT, image, ...base },
+    { messages: [{ role: 'system', content: 'You are a careful visual inspector.' }, { role: 'user', content: PROMPT }], image, ...base },
+    { messages: [{ role: 'user', content: [{ type: 'text', text: PROMPT }, { type: 'image_url', image_url: { url: image } }] }], ...base }
+  ];
+  const errors = [];
+  for (const args of variants) {
+    try {
+      return await env.AI.run(MODEL, args);
+    } catch (e) {
+      const m = String((e && e.message) || e);
+      if (/neuron|daily|allocation|quota|4006/i.test(m)) throw e;
+      if (/agree|license|acceptable use/i.test(m)) {
+        // 第一次使用需同意 Meta 的授權條款，這裡自動處理一次
+        try { await env.AI.run(MODEL, { prompt: 'agree' }); return await env.AI.run(MODEL, args); }
+        catch (e2) { errors.push('agree:' + String((e2 && e2.message) || e2)); continue; }
+      }
+      errors.push(m);
+    }
   }
+  throw new Error(errors.join(' | '));
+}
+
+async function classify(env, image) {
+  const r = await runModel(env, image);
   const text = typeof r === 'string' ? r : (r && r.response) || '';
   const m = String(text).match(/\{[\s\S]*?\}/);
   let o = {};
@@ -70,7 +86,7 @@ export default {
       return json(await classify(env, img));
     } catch (e) {
       const msg = String((e && e.message) || e);
-      const dbg = body && body.debug === true ? { detail: msg.slice(0, 300) } : {};
+      const dbg = body && body.debug === true ? { detail: msg.slice(0, 600) } : {};
       if (/neuron|daily|allocation|quota|4006/i.test(msg)) return json({ error: 'quota', ...dbg }, 429);
       return json({ error: 'ai', ...dbg }, 502);
     }
