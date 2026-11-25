@@ -108,3 +108,20 @@
     document.addEventListener('visibilitychange',function(){if(document.hidden&&!a.paused)a.pause()});
   });
 })();
+;(function(){
+  function ready(f){document.readyState==='loading'?document.addEventListener('DOMContentLoaded',f):f()}
+  ready(function(){
+    if(document.getElementById('hs-line'))return;
+    var st=document.createElement('style');
+    st.textContent='#hs-line{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:2147482000;display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:99px;background:#06c755;color:#102638;font:700 15px/1 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.3);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .3s,transform .3s}#hs-line.show{opacity:1;transform:none;pointer-events:auto}#hs-line:focus-visible{outline:3px solid #102638;outline-offset:3px}#hs-line svg{width:20px;height:20px;flex:none}';
+    document.head.appendChild(st);
+    var a=document.createElement('a');
+    a.id='hs-line';a.href='https://lin.ee/t9p1xaT';a.target='_blank';a.rel='noopener';
+    a.setAttribute('aria-label','用 LINE 洽詢 Home Shield');
+    a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#102638" d="M12 3C6.5 3 2 6.6 2 11c0 2.5 1.5 4.7 3.8 6.2L5 21l4-2.1c.9.2 1.9.3 3 .3 5.5 0 10-3.6 10-8S17.5 3 12 3z"/></svg>LINE 洽詢';
+    document.body.appendChild(a);
+    var home=document.body.classList.contains('home-page');
+    function chk(){a.classList.toggle('show',!home||window.scrollY>400)}
+    window.addEventListener('scroll',chk,{passive:true});chk();
+  });
+})();
