@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI 照片初步檢測｜Home Shield</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap">
+<style>
+:root{--bg:#f2f5f7;--card:#fff;--ink:#102638;--mute:#5b6f7e;--line:#d5dee5;--water:#2b8fc0;--amber:#c97a10;--ok:#1f9d6b;--chip:#eaf1f6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1822;--card:#142636;--ink:#e4eef4;--mute:#93a9b8;--line:#27425a;--chip:#1c3347;--water:#52b4e2;--amber:#f2a541}}
+:root[data-theme="dark"]{--bg:#0c1822;--card:#142636;--ink:#e4eef4;--mute:#93a9b8;--line:#27425a;--chip:#1c3347;--water:#52b4e2;--amber:#f2a541}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.65;padding:16px}
+.wrap{max-width:560px;margin:0 auto}
+h1{font-size:22px;font-weight:900;line-height:1.35}
+.sub{color:var(--mute);font-size:14px;margin:6px 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:150px;border:2px dashed var(--line);border-radius:14px;background:var(--chip);cursor:pointer;text-align:center;padding:14px}
+.drop:focus-within{outline:3px solid var(--water);outline-offset:2px}
+.drop b{font-size:16px}.drop span{font-size:13px;color:var(--mute)}
+.drop input{position:absolute;opacity:0;width:1px;height:1px}
+#prev{display:none;width:100%;max-height:320px;object-fit:contain;border-radius:12px;margin-top:12px;background:var(--chip)}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--mute);margin-top:14px}
+.consent input{margin-top:4px;width:18px;height:18px;flex:none}
+button,.btn{font:inherit;cursor:pointer}
+.go{display:block;width:100%;margin-top:14px;padding:14px;border:0;border-radius:99px;background:var(--water);color:#fff;font-size:16px;font-weight:700}
+.go:disabled{opacity:.45;cursor:not-allowed}
+.go:focus-visible,a:focus-visible,button:focus-visible{outline:3px solid var(--water);outline-offset:3px}
+.msg{font-size:14px;margin-top:10px;color:var(--mute);min-height:20px}
+.msg.err{color:#d2453b}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--water);border-radius:50%;vertical-align:-2px;margin-right:8px;animation:s .8s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+#res{display:none}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 12px;border-radius:99px;color:#fff;margin-bottom:8px}
+.lv-mid{background:var(--amber)}.lv-low{background:#c9a11e}.lv-ok{background:var(--ok)}.lv-unk{background:var(--mute)}
+#res h2{font-size:19px;font-weight:900;margin-bottom:6px}
+#res h3{font-size:13px;color:var(--mute);margin-top:12px}
+#res p{font-size:15px}
+.note{font-size:13px;color:var(--mute);margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--chip)}
+.acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{border-radius:99px;padding:11px 20px;font-size:15px;font-weight:700;text-decoration:none;border:1px solid var(--water);text-align:center}
+.pri{background:var(--water);color:#fff}.sec{color:var(--water)}
+.fine{font-size:12px;color:var(--mute);margin-top:12px}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AI 照片初步檢測</h1>
+  <p class="sub">上傳一張疑似漏水或受潮的照片，取得初步參考。</p>
+
+  <div class="card">
+    <label class="drop" id="drop"><b>選擇或拍攝照片</b><span>請拍清楚、光線充足，靠近問題位置</span>
+      <input id="file" type="file" accept="image/*">
+    </label>
+    <img id="prev" alt="已選擇的照片預覽">
+    <label class="consent"><input id="ok" type="checkbox"><span>我了解照片會傳送給 AI 做這次分析，網站不會儲存照片。結果僅供初步參考，不能取代現場檢查。</span></label>
+    <button class="go" id="go" type="button" disabled>開始分析</button>
+    <div class="msg" id="msg" aria-live="polite"></div>
+  </div>
+
+  <div class="card" id="res" aria-live="polite"></div>
+  <p class="fine">請避免拍到人臉、門牌或證件等個人資訊。</p>
+</div>
+
+<script>
+(function(){
+  var R={
+    ceiling_stain:{t:'天花板疑似有水痕或黃斑',lv:'mid',c:'可能與上方樓層、屋頂或管線的滲水有關，需要確認水的來源。',a:'拍下範圍並標記日期，下雨後再觀察是否擴大。若持續出現，建議安排房屋健檢。'},
+    wall_dampness:{t:'牆面疑似潮濕、壁癌或有白色結晶',lv:'mid',c:'常見於牆體反覆受潮，可能來自外牆滲水、管線或排水問題。',a:'記錄範圍與位置，同一面牆的室內外一起觀察。建議安排房屋健檢，找出水的來源。'},
+    paint_bubbling:{t:'油漆疑似起泡或剝落',lv:'low',c:'通常與牆體內部潮濕有關。',a:'先拍照記錄，觀察是否擴大或反覆出現，再決定是否安排檢查。'},
+    mold:{t:'疑似有發霉黑斑',lv:'mid',c:'表示該處可能長期潮濕或通風不良。',a:'保持通風並記錄範圍。若面積大或反覆出現，建議檢查潮濕的來源。'},
+    crack:{t:'疑似有裂縫',lv:'mid',c:'裂縫的成因很多，是否與滲水有關，需要現場判斷。',a:'記錄裂縫的位置與寬度，之後比較是否變化。無法從照片判斷結構是否安全，建議現場評估。'},
+    tile_leak:{t:'磁磚縫疑似發黑或滲水',lv:'mid',c:'可能與地面防水層或管線接頭的狀況有關。',a:'留意是否只在用水後出現。若樓下已受影響，建議盡快安排檢查。'},
+    ponding:{t:'疑似有積水',lv:'mid',c:'可能是排水不順，或地面與交界處的防水老化。',a:'清理排水孔並觀察排水速度。反覆積水的話，建議評估處理方式。'},
+    no_issue:{t:'照片中沒有看到明顯徵兆',lv:'ok',c:'',a:'單張照片可能看不出問題。如果仍然擔心，可以做完整的自我檢查，或預約房屋健檢。'},
+    unclear:{t:'無法從這張照片判斷',lv:'unk',c:'',a:'請在光線充足的地方重新拍攝，靠近問題位置，並讓畫面保持清楚。'}
+  };
+  var LV={mid:'建議留意',low:'輕微，持續觀察',ok:'沒有明顯徵兆',unk:'無法判斷'};
+  var $=function(i){return document.getElementById(i)},file=$('file'),prev=$('prev'),ok=$('ok'),go=$('go'),msg=$('msg'),res=$('res'),data=null;
+
+  function sync(){go.disabled=!(data&&ok.checked)}
+  function say(t,err){msg.className='msg'+(err?' err':'');msg.textContent=t||''}
+
+  file.addEventListener('change',function(){
+    data=null;res.style.display='none';prev.style.display='none';sync();say('');
+    var f=file.files&&file.files[0];if(!f)return;
+    if(!/^image\//.test(f.type)){say('請選擇圖片檔。',true);return}
+    var url=URL.createObjectURL(f),im=new Image();
+    im.onload=function(){
+      var s=Math.min(1,1024/Math.max(im.width,im.height)),w=Math.round(im.width*s),h=Math.round(im.height*s);
+      var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);
+      data=c.toDataURL('image/jpeg',.82);URL.revokeObjectURL(url);
+      prev.src=data;prev.style.display='block';sync();
+    };
+    im.onerror=function(){URL.revokeObjectURL(url);say('這張照片無法讀取，請換一張（建議 JPG 或 PNG）。',true)};
+    im.src=url;
+  });
+  ok.addEventListener('change',sync);
+
+  go.addEventListener('click',function(){
+    if(go.disabled)return;
+    go.disabled=true;res.style.display='none';
+    msg.className='msg';msg.innerHTML='<span class="spin"></span>分析中，請稍候…';
+    fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:data})})
+      .then(function(r){return r.json().then(function(j){return{s:r.status,j:j}})})
+      .then(function(o){
+        if(o.s===200&&o.j&&o.j.category){show(o.j);say('');}
+        else if(o.j&&o.j.error==='quota')say('今天的免費分析額度已用完，請明天再試，或直接用 LINE 傳照片給我們。',true);
+        else if(o.j&&o.j.error==='rate')say('分析次數太頻繁，請稍後再試。',true);
+        else say('目前無法分析，請稍後再試，或直接用 LINE 傳照片給我們。',true);
+      })
+      .catch(function(){say('連線失敗，請檢查網路後再試。',true)})
+      .then(function(){sync()});
+  });
+
+  function show(j){
+    var d=R[j.category]||R.unclear,h='<span class="badge lv-'+d.lv+'">'+LV[d.lv]+'</span><h2></h2>';
+    if(d.c)h+='<h3>可能原因</h3><p class="c"></p>';
+    h+='<h3>建議做法</h3><p class="a"></p>';
+    if(j.quality==='poor'||j.confidence==='low')h+='<div class="note">這張照片較難判斷，AI 的把握度偏低。建議重新拍攝，或直接聯絡我們。</div>';
+    h+='<div class="acts"><a class="btn pri" href="/line.html" target="_top">用 LINE 傳給我們</a><a class="btn sec" href="/check.html" target="_top">做完整自我檢查</a><a class="btn sec" href="/contact.html" target="_top">預約房屋健檢</a></div>';
+    h+='<p class="fine">AI 只能從照片做初步分類，無法確認原因，也無法判斷結構安全。實際狀況請以現場評估為準。</p>';
+    res.innerHTML=h;
+    res.querySelector('h2').textContent=d.t;
+    var c=res.querySelector('.c');if(c)c.textContent=d.c;
+    res.querySelector('.a').textContent=d.a;
+    res.style.display='block';
+    try{res.scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}
+  }
+})();
+</script>
+</body>
+</html>

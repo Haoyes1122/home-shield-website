@@ -1,0 +1,10 @@
+{
+  "name": "home-shield-website",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-25",
+  "ai": { "binding": "AI" },
+  "assets": {
+    "directory": "./",
+    "run_worker_first": ["/api/*"]
+  }
+}
