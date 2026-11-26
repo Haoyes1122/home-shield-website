@@ -1,7 +1,12 @@
 // Home Shield：照片初步判定 API（使用 Cloudflare Workers AI，免費額度內不會產生費用）
 // 模型只負責「分類」，不產生建議文字；建議內容寫在 ai-check.html，方便你自行修改。
 
-const MODEL = '@cf/meta/llama-3.2-11b-vision-instruct';
+// 依序嘗試：Gemma 4（主要）→ Llama 4 Scout → Llama 3.2 Vision（舊版備用）
+const PLANS = [
+  ['@cf/google/gemma-4-26b-a4b-it', 'chat'],
+  ['@cf/meta/llama-4-scout-17b-16e-instruct', 'chat'],
+  ['@cf/meta/llama-3.2-11b-vision-instruct', 'legacy']
+];
 const CATS = ['ceiling_stain','wall_dampness','paint_bubbling','mold','crack','tile_leak','ponding','no_issue','unclear'];
 
 const PROMPT = `You are helping with a preliminary home moisture check. Look at the photo and reply with ONE JSON object only, no other text:
@@ -26,43 +31,58 @@ function limited(ip) {
   return list.length > 8;
 }
 
-// 依序嘗試幾種輸入格式，直到其中一種成功（不同版本的模型接受的格式略有差異）
+function textOf(r) {
+  if (!r) return '';
+  if (typeof r === 'string') return r;
+  if (r.response !== undefined && r.response !== null) return typeof r.response === 'string' ? r.response : JSON.stringify(r.response);
+  const m = r.choices && r.choices[0] && r.choices[0].message;
+  if (m && m.content) return typeof m.content === 'string' ? m.content : JSON.stringify(m.content);
+  if (typeof r.output_text === 'string') return r.output_text;
+  return '';
+}
+
 async function runModel(env, image) {
-  const base = { max_tokens: 100, temperature: 0.1 };
-  const variants = [
-    { prompt: PROMPT, image, ...base },
-    { messages: [{ role: 'system', content: 'You are a careful visual inspector.' }, { role: 'user', content: PROMPT }], image, ...base },
-    { messages: [{ role: 'user', content: [{ type: 'text', text: PROMPT }, { type: 'image_url', image_url: { url: image } }] }], ...base }
-  ];
   const errors = [];
-  for (const args of variants) {
+  for (const [model, kind] of PLANS) {
+    const args = kind === 'chat'
+      ? { messages: [{ role: 'user', content: [{ type: 'text', text: PROMPT }, { type: 'image_url', image_url: { url: image } }] }], max_tokens: 700, temperature: 0.1 }
+      : { messages: [{ role: 'system', content: 'You are a careful visual inspector.' }, { role: 'user', content: PROMPT }], image, max_tokens: 100, temperature: 0.1 };
     try {
-      return await env.AI.run(MODEL, args);
+      const r = await env.AI.run(model, args);
+      if (textOf(r)) return { r, model };
+      errors.push(model.split('/').pop() + ':empty');
     } catch (e) {
       const m = String((e && e.message) || e);
       if (/neuron|daily|allocation|quota|4006/i.test(m)) throw e;
       if (/agree|license|acceptable use/i.test(m)) {
-        // 第一次使用需同意 Meta 的授權條款，這裡自動處理一次
-        try { await env.AI.run(MODEL, { prompt: 'agree' }); return await env.AI.run(MODEL, args); }
-        catch (e2) { errors.push('agree:' + String((e2 && e2.message) || e2)); continue; }
+        try { await env.AI.run(model, { prompt: 'agree' }); const r2 = await env.AI.run(model, args); if (textOf(r2)) return { r: r2, model }; } catch (e2) { errors.push(model.split('/').pop() + ':' + String((e2 && e2.message) || e2)); continue; }
       }
-      errors.push(m);
+      errors.push(model.split('/').pop() + ':' + m);
     }
   }
   throw new Error(errors.join(' | '));
 }
 
-async function classify(env, image) {
-  const r = await runModel(env, image);
-  const text = typeof r === 'string' ? r : (r && r.response) || '';
-  const m = String(text).match(/\{[\s\S]*?\}/);
+async function classify(env, image, debug) {
+  const { r, model } = await runModel(env, image);
+  const text = textOf(r);
   let o = {};
-  try { o = JSON.parse(m ? m[0] : '{}'); } catch (e) {}
-  return {
-    category: CATS.includes(o.category) ? o.category : 'unclear',
-    confidence: ['low', 'medium', 'high'].includes(o.confidence) ? o.confidence : 'low',
-    quality: o.quality === 'poor' ? 'poor' : 'good'
+  const found = (text.match(/\{[^{}]*\}/g) || []).filter(x => x.includes('category'));
+  if (found.length) { try { o = JSON.parse(found[found.length - 1]); } catch (e) {} }
+  let cat = typeof o.category === 'string' ? o.category.trim().toLowerCase() : '';
+  if (!CATS.includes(cat)) {
+    const low = text.toLowerCase();
+    let best = -1; cat = 'unclear';
+    for (const c of CATS) { const i = low.lastIndexOf(c); if (i > best) { best = i; cat = c; } }
+  }
+  const conf = String(o.confidence || '').toLowerCase();
+  const out = {
+    category: cat,
+    confidence: ['low', 'medium', 'high'].includes(conf) ? conf : (cat === 'unclear' ? 'low' : 'medium'),
+    quality: String(o.quality || '').toLowerCase() === 'poor' ? 'poor' : 'good'
   };
+  if (debug) out.raw = model.split('/').pop() + ' → ' + text.slice(0, 350);
+  return out;
 }
 
 export default {
@@ -83,10 +103,10 @@ export default {
     }
 
     try {
-      return json(await classify(env, img));
+      return json(await classify(env, img, body && body.debug === true));
     } catch (e) {
       const msg = String((e && e.message) || e);
-      const dbg = body && body.debug === true ? { detail: msg.slice(0, 600) } : {};
+      const dbg = body && body.debug === true ? { detail: msg.slice(0, 700) } : {};
       if (/neuron|daily|allocation|quota|4006/i.test(msg)) return json({ error: 'quota', ...dbg }, 429);
       return json({ error: 'ai', ...dbg }, 502);
     }
